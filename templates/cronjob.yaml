@@ -1,0 +1,19 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: service-scale-up-job
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: sa-nginx-deployment
+          containers:
+          - name: service-scheduled-job
+            image: bitnami/kubectl:latest
+            command:
+              - "/bin/bash"
+              - "-c"
+              - "kubectl scale deployment nginx-timed-chart --replicas=$(date +'%M' | grep -o .$)"
+          restartPolicy: OnFailure
